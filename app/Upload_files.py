@@ -79,19 +79,23 @@ class ParquetUploader:
             process_id = await self.create_process_id()
             file_path, content = await self.save_temp_file(file)
 
-            # ===== DEBUG TEMPORAIRE =====
-            from pathlib import Path
-            tmp_file = Path(file_path)
-            print("DEBUG: file_path =", tmp_file)
-            print("DEBUG: Exists?", tmp_file.exists())
-            print("DEBUG: Readable?", tmp_file.stat())
-            # ============================
+            print("DEBUG: File saved, file_path =", file_path)
+            print("DEBUG: Content first 100 chars =", content[:100])
 
             separator = await self.detect_separator(content)
+            print("DEBUG: Detected separator =", separator)
+
             data = await self.load_csv(file_path, separator)
+            print("DEBUG: Data loaded, length =", len(data))
+
             await self.save_to_faiss(data, process_id)
+            print("DEBUG: Saved to FAISS")
+
             await self.save_to_parquet(content, separator, process_id)
+            print("DEBUG: Saved to Parquet")
+
             await self.clean_up(file_path)
+            print("DEBUG: Temp file cleaned up")
 
             return JSONResponse(
                 content={
@@ -104,11 +108,13 @@ class ParquetUploader:
             )
 
         except (csv.Error, pd.errors.EmptyDataError, pd.errors.ParserError) as e:
+            print("DEBUG: CSV parsing error:", e)
             return JSONResponse(
                 content={"message": f"CSV parsing error: {e}"},
                 status_code=400
             )
         except Exception as e:
+            print("DEBUG: Exception:", e)
             return JSONResponse(
                 content={"message": f"An error occurred: {e}"},
                 status_code=500
