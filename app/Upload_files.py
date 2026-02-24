@@ -43,6 +43,8 @@ class ParquetUploader:
             file_path = temp_file.name
             content = await file.read()
             temp_file.write(content)  # Pas besoin d'await ici
+            # Ajout des permissions pour que FastAPI puisse lire/écrire
+            s.chmod(file_path, 0o666)
         return file_path, content
 
     async def detect_separator(self, content: bytes) -> str:
@@ -76,7 +78,7 @@ class ParquetUploader:
             await self.verify_csv_extension(file)
             process_id = await self.create_process_id()
             file_path, content = await self.save_temp_file(file)
-            
+
             # ===== DEBUG TEMPORAIRE =====
             from pathlib import Path
             tmp_file = Path(file_path)
