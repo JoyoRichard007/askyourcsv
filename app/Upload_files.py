@@ -44,7 +44,7 @@ class ParquetUploader:
             content = await file.read()
             temp_file.write(content)  # Pas besoin d'await ici
             # Ajout des permissions pour que FastAPI puisse lire/écrire
-            s.chmod(file_path, 0o666)
+            os.chmod(file_path, 0o666)
         return file_path, content
 
     async def detect_separator(self, content: bytes) -> str:
