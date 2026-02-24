@@ -1,0 +1,6 @@
+.env
+important/
+vectorestore/
+parquet/
+tmp/
+__pycache__
