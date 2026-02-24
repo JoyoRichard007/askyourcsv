@@ -13,6 +13,7 @@ from langchain_community.vectorstores import FAISS
 from dotenv import load_dotenv
 from tempfile import NamedTemporaryFile
 
+
 load_dotenv()
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
@@ -75,6 +76,15 @@ class ParquetUploader:
             await self.verify_csv_extension(file)
             process_id = await self.create_process_id()
             file_path, content = await self.save_temp_file(file)
+            
+            # ===== DEBUG TEMPORAIRE =====
+            from pathlib import Path
+            tmp_file = Path(file_path)
+            print("DEBUG: file_path =", tmp_file)
+            print("DEBUG: Exists?", tmp_file.exists())
+            print("DEBUG: Readable?", tmp_file.stat())
+            # ============================
+
             separator = await self.detect_separator(content)
             data = await self.load_csv(file_path, separator)
             await self.save_to_faiss(data, process_id)
