@@ -92,7 +92,11 @@ class CSVSession:
         template = TEMPLATE.format(dhead=self.df.head().to_markdown())
         tools = [retriever_tool, repl]
 
-        llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.6)
+        # llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.6)
+        llm = ChatOpenAI(
+            model="gpt-4o-mini",
+            temperature=0.2
+        )
         llm_with_tools = llm.bind_tools(tools)
 
         prompt = ChatPromptTemplate.from_messages(
